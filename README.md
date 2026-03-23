@@ -1,6 +1,6 @@
 ## Veeam Dumper BOF
 
-A credential extraction BOF for Veeam Backup and Replication and Veeam One by Stephen Munro and Logan Kroeger from @MWRCyberSec.
+A credential extraction BOF for Veeam Backup and Replication and Veeam One by Stephen Munro and Logan Kroeger from @MWRCyberSec. The BOF needs to be executed in an Admin beacon on either a Veeam One or Veeam Backup and Replication server.
 
 ```
 tldr;
@@ -8,7 +8,7 @@ The BOF uses sqlcmd.exe/psql.exe to extract encrypted credential blobs from the 
 ```
 
 I am not a skilled C developer, so I strongly suggest spawning a second beacon to run this BOF as a precaution if you are worried about the beacon crashing. I have tested against Veeam One and Veeam Backup and Replication for both PSQL and MSSQL and all of them worked.
-<!-- There is also a standalone .Net implementation on: https://github.com/MWR-CyberSec/ -->
+<!-- There is also a standalone .Net implementation coming soon: https://github.com/MWR-CyberSec/ -->
 
 
 ### Disclaimer
@@ -54,7 +54,6 @@ x86_64-w64-mingw32-gcc -c cs_veeam_dumper.c -o cs_veeam_dumper.x64.o
 ```
 
 <!-- ### Resources
-
 
 [MWR Blog - link](https://mwrcybersec.com) 
 
