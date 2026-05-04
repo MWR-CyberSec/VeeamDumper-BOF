@@ -1,6 +1,6 @@
 ## Veeam Dumper BOF
 
-A credential extraction BOF for Veeam Backup and Replication and Veeam One by Stephen Munro and Logan Kroeger from @MWRCyberSec. The BOF needs to be executed in an Admin beacon on either a Veeam One or Veeam Backup and Replication server.
+A credential extraction BOF for Veeam Backup and Replication and Veeam One by Stephen Munro and Logan Kroeger from @MWRCyberSec. The BOF needs to be executed in an Admin beacon on either a Veeam One or Veeam Backup and Replication server and supports Cobalt Strike and Outflank C2.
 
 ```
 tldr;
@@ -39,7 +39,8 @@ Examples:
 
 ### Features
 The BOF can do the following:
-* Supports both PSQL and MSSQL for Veeam Backup and Replication nad Veeam One
+* Supports both PSQL and MSSQL for Veeam Backup and Replication and Veeam One
+* Outflank C2 (.s1.py) and Cobalt Strike (.cna)
 * Has a full auto mode
 * Search for the necessary sqlcmd.exe/psql.exe in common locations or specify manually
 * Automatically obtain the database name and salt from registry for Veeam Backup and Replication and VeeamOne
