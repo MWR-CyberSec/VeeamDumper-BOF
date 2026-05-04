@@ -276,7 +276,7 @@ void go(char * args, int alen) {
     char* outtemp = BeaconFormatToString(&credentials_buffer, &lentemp);
 
     if (lentemp > 0) {
-        BeaconPrintf(CALLBACK_OUTPUT, "%.*s\n", lentemp, outtemp);
+        BeaconPrintf(CALLBACK_OUTPUT, "%.*s", lentemp, outtemp);
         BeaconFormatReset(&credentials_buffer);
         BeaconFormatFree(&credentials_buffer);
         // BeaconFormatAlloc(&buffer,MAX_BUF_LEN);
@@ -285,7 +285,7 @@ void go(char * args, int alen) {
     outtemp = BeaconFormatToString(&host_creds_buffer, &lentemp);
 
     if (lentemp > 0) {
-        BeaconPrintf(CALLBACK_OUTPUT, "%.*s\n", lentemp, outtemp);
+        BeaconPrintf(CALLBACK_OUTPUT, "%.*s", lentemp, outtemp);
         BeaconFormatReset(&host_creds_buffer);
         BeaconFormatFree(&host_creds_buffer);
         BeaconFormatAlloc(&host_creds_buffer,MAX_BUF_LEN);
