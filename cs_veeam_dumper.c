@@ -64,6 +64,9 @@ void go(char * args, int alen) {
     BeaconFormatPrintf(&credentials_buffer, "======================\n");
     BeaconFormatPrintf(&credentials_buffer, "Credentials:\n");
     BeaconFormatPrintf(&credentials_buffer, "======================\n");
+    
+ 
+
     if (alen < 1) {
         BeaconPrintf(CALLBACK_ERROR,"[-] at least one argument is required\n");
         return;
@@ -269,12 +272,30 @@ void go(char * args, int alen) {
     // return;
     mapCredentials();
     BeaconFormatFree(&buffer);
-    BeaconPrintf(CALLBACK_OUTPUT,"%s",BeaconFormatToString(&credentials_buffer,NULL));
-    BeaconFormatFree(&credentials_buffer);
+    int lentemp = 0;
+    char* outtemp = BeaconFormatToString(&credentials_buffer, &lentemp);
+
+    if (lentemp > 0) {
+        BeaconPrintf(CALLBACK_OUTPUT, "%.*s\n", lentemp, outtemp);
+        BeaconFormatReset(&credentials_buffer);
+        BeaconFormatFree(&credentials_buffer);
+        // BeaconFormatAlloc(&buffer,MAX_BUF_LEN);
+    } 
+
+    outtemp = BeaconFormatToString(&host_creds_buffer, &lentemp);
+
+    if (lentemp > 0) {
+        BeaconPrintf(CALLBACK_OUTPUT, "%.*s\n", lentemp, outtemp);
+        BeaconFormatReset(&host_creds_buffer);
+        BeaconFormatFree(&host_creds_buffer);
+        BeaconFormatAlloc(&host_creds_buffer,MAX_BUF_LEN);
+    } 
+    // BeaconPrintf(CALLBACK_OUTPUT,"%s",BeaconFormatToString(&credentials_buffer,NULL));
+    // BeaconFormatFree(&credentials_buffer);
     // PrintAndClear();
     // return;
-    BeaconPrintf(CALLBACK_OUTPUT,"%s",BeaconFormatToString(&host_creds_buffer,NULL));
-    BeaconFormatFree(&host_creds_buffer);
+    // BeaconPrintf(CALLBACK_OUTPUT,"%s",BeaconFormatToString(&host_creds_buffer,NULL));
+    // BeaconFormatFree(&host_creds_buffer);
     
 
     
@@ -875,6 +896,7 @@ void DecryptLine(char* line,int len){
 
         }
         if (ClearText != NULL){
+            // BeaconPrintf(CALLBACK_OUTPUT, "Username: %s\nPassword: %s\n",Username,ClearText);
             BeaconFormatPrintf(&credentials_buffer, "Username: %s\n", Username);
             BeaconFormatPrintf(&credentials_buffer, "Password: %s\n", ClearText);
             BeaconFormatPrintf(&credentials_buffer, "Desc: %s\n\n", Desc);
