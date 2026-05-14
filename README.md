@@ -58,4 +58,4 @@ x86_64-w64-mingw32-gcc -c cs_veeam_dumper.c -o cs_veeam_dumper.x64.o
 
 <!--[MWR Blog - link](https://mwrcybersec.com)  -->
 
-[Veeam Dumper .NET Implementation](https://github.com/MWR-CyberSec/)
+[Veeam Dumper .NET Implementation](https://github.com/MWR-CyberSec/VeeamDumper)
